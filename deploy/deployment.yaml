@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderbeans
+  namespace: phaseolus
+  labels:
+    app: orderbeans
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderbeans
+  template:
+    metadata:
+      labels:
+        app: orderbeans
+    spec:
+      containers:
+        - name: orderbeans
+          image: orderbeans:dev # placeholder — bumped to a git-SHA tag once built and `minikube image load`ed (see architecture plan Q4)
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RabbitMq__Host
+              value: rabbitmq.infra.svc.cluster.local
+            - name: RabbitMq__Port
+              value: "5672"
+            - name: RabbitMq__User
+              value: phaseolus
+            - name: RabbitMq__Pass
+              value: phaseolus
+            - name: Keycloak__Authority
+              value: http://keycloak.infra.svc.cluster.local:8080/realms/phaseolus
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            initialDelaySeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            initialDelaySeconds: 5
