@@ -31,7 +31,7 @@ spec:
             - name: RabbitMq__Pass
               value: phaseolus
             - name: Keycloak__Authority
-              value: http://keycloak.infra.svc.cluster.local:8080/realms/phaseolus
+              value: http://keycloak.infra.svc.cluster.local/realms/phaseolus
           livenessProbe:
             httpGet:
               path: /healthz/live
