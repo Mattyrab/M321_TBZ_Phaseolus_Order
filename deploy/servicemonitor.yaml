@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: orderbeans
+  namespace: phaseolus
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: orderbeans
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
