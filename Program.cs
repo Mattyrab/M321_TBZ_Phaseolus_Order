@@ -38,7 +38,7 @@ app.MapHealthChecks("/healthz/ready", new() { Predicate = c => c.Tags.Contains("
 app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
 {
     var orderId = Guid.NewGuid();
-    var payload = new OrderCreatedPayload(request.Items, request.TotalAmount);
+    var payload = new OrderCreatedPayload(request.Items, request.TotalAmount, request.Email);
 
     var envelope = new EventEnvelope(
         EventId: Guid.NewGuid(),
