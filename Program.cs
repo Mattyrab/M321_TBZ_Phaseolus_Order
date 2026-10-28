@@ -35,6 +35,8 @@ app.MapMetrics();
 app.MapHealthChecks("/healthz/live", new() { Predicate = c => c.Tags.Contains("live") });
 app.MapHealthChecks("/healthz/ready", new() { Predicate = c => c.Tags.Contains("ready") });
 
+var ordersPlaced = Metrics.CreateCounter("orders_placed_total", "Total number of orders placed.");
+
 app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
 {
     var orderId = Guid.NewGuid();
@@ -48,6 +50,7 @@ app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
         Payload: JsonSerializer.SerializeToElement(payload));
 
     publisher.Publish("order.created", envelope);
+    ordersPlaced.Inc();
 
     return Results.Accepted(value: new { orderId });
 }).RequireAuthorization();
