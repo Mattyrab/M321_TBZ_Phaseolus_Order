@@ -16,7 +16,8 @@ builder.Services
     {
         options.Authority = builder.Configuration["Keycloak:Authority"];
         options.RequireHttpsMetadata = false; // Keycloak runs on plain HTTP inside the cluster (no TLS hardening, per the architecture plan's non-goals)
-        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.ValidateAudience = true;
+        options.TokenValidationParameters.ValidAudience = "phaseolus-internal-api";
     });
 builder.Services.AddAuthorization();
 
