@@ -38,7 +38,7 @@ app.MapHealthChecks("/healthz/ready", new() { Predicate = c => c.Tags.Contains("
 
 var ordersPlaced = Metrics.CreateCounter("orders_placed_total", "Total number of orders placed.");
 
-app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
+app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher, ILogger<Program> logger) =>
 {
     var orderId = Guid.NewGuid();
     var payload = new OrderCreatedPayload(request.Items, request.TotalAmount, request.Email, request.DeliveryNote);
@@ -52,6 +52,8 @@ app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
 
     publisher.Publish("order.created", envelope);
     ordersPlaced.Inc();
+    logger.LogInformation("Order {OrderId} placed ({ItemCount} item(s), total {TotalAmount})",
+        orderId, request.Items.Count, request.TotalAmount);
 
     return Results.Accepted(value: new { orderId });
 }).RequireAuthorization();
