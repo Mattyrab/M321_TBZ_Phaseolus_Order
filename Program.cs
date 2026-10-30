@@ -41,7 +41,7 @@ var ordersPlaced = Metrics.CreateCounter("orders_placed_total", "Total number of
 app.MapPost("/orders", (CreateOrderRequest request, EventPublisher publisher) =>
 {
     var orderId = Guid.NewGuid();
-    var payload = new OrderCreatedPayload(request.Items, request.TotalAmount, request.Email);
+    var payload = new OrderCreatedPayload(request.Items, request.TotalAmount, request.Email, request.DeliveryNote);
 
     var envelope = new EventEnvelope(
         EventId: Guid.NewGuid(),
